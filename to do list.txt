@@ -1,0 +1,2 @@
+Refaire ceux d'avant en corrigeant densite de l'eau et hauteur de vague a 1.2m
+Faire attention a la geometrie et faire attention au fichier de frames
