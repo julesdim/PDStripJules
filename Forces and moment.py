@@ -347,3 +347,4 @@ extreme_point = printing_the_extreme_point("pdstrip.out.ok", "real", 135)
 # graph_file_for_one_wave("pdstrip.out.ok", 104.72, 180, 0, "real", True, True, "speed")
 # graph_file_for_one_wave("pdstrip.out.ok", 385.11, 0, 0, "real", True, True, "speed")
 print(extreme_point)
+
