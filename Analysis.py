@@ -458,7 +458,7 @@ class Analysis:
                 if line_formatted[0] == "Force":
                     ex_int = float(line_formatted[1])
                 if line_formatted[0] == "Moment":
-                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[4])*9.80665
+                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[6])*9.80665
                     count_mom += 1
                     if count_mom == nb_intersections:
                         bool_complete_wv = True
@@ -467,7 +467,10 @@ class Analysis:
                         ex_wv_freq = None
                         count_mom = 0
         res_func_int = {}
+        list_x=[]
+        list_test=[]
         for x, m_angle in m_int.items():
+            list_x.append(x)
             res2 = {}
             res_func_angle = {}
             for theta2, m_freq in m_angle.items():
@@ -478,6 +481,9 @@ class Analysis:
                 for freq in freqs:
                     freq_th = freq[0]
                     freq_e = freq[1]
+                    if theta2==90 and freq_th==0.5:
+                        list_test.append(m_int[x][theta2][freq])
+                        print("test")
                     list_freq1.append(freq_th)
                     vals[freq_th]=((abs(freq_e) ** n) * (m_int[x][theta2][freq] ** 2) * hull.JONSWAP(abs(freq_e) / 2 / np.pi))
                 list_freq1.sort()
@@ -512,6 +518,8 @@ class Analysis:
             file2.write(str(x) + " " + str(res_func_int[x]) + "\n")
         max_key = max(res_func_int, key=res_func_int.get)
         print(max_key, res_func_int[max_key])
+        plt.plot(list_x,list_test)
+        plt.show()
         return res_func_int
 
     def max_BM_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
