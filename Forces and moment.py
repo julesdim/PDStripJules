@@ -384,8 +384,8 @@ def printing_the_extreme_point(filename: str, text: str, Lpp: float):
             x_coordinate_extremebm)
 
 
-graph_many_wave_angle("pdstrip.out.ok", 0, 104.72, "absolute", 135)
-graph_file_for_one_wave("pdstrip.out.ok", 104.72,90, 0, "absolute", True, True, "speed",135)
+graph_many_wave_angle("pdstrip.out.ok", 0, 20.88, "absolute", 135)
+graph_file_for_one_wave("pdstrip.out.ok", 206.27,90, 0, "absolute", True, True, "speed",135)
 # graph_many_wave_length("pdstrip.out.ok", 100, 7000, 0, 0, "real", 135)
 # graph_many_wave_length("pdstrip.out.ok", 100, 7000, 4.17, 0, "real", 135)
 # graph_many_speed("pdstrip.out.ok", 0, 5, 540.3, 0, "real", 135)

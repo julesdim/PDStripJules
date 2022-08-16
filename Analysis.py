@@ -373,10 +373,10 @@ class Analysis:
         g = 9.80665
         file = open(self.filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
-        theta = []
+        list_theta1 = []
         x_coordinates = []
         intersections = []
-        prev_angle = False
+        bool_prev_angle = False
         ex_wv_angle = None
         ex_wv_spd = None
         ex_wv_freq = None
@@ -394,13 +394,12 @@ class Analysis:
                 line_formatted.remove("encounter")
                 line_formatted.remove("angles")
                 for angle in line_formatted:
-                    val = float(angle)
-                    theta.append(val)
-                prev_angle = True
+                    list_theta1.append(float(angle))
+                bool_prev_angle = True
             if len(line_formatted) == 6:
                 if line_formatted[4] == "x=":
                     x_coordinates.append(float(line_formatted[5]))
-            if prev_angle and float(line_formatted[0]) != theta[0]:
+            if bool_prev_angle and float(line_formatted[0]) != list_theta1[0]:
                 try:
                     float(line_formatted[0])
                     test = True
@@ -409,33 +408,34 @@ class Analysis:
                 if test:
                     for angle in line_formatted:
                         val = float(angle)
-                        theta.append(val)
-                prev_angle = False
+                        list_theta1.append(val)
+                bool_prev_angle = False
+        file.close()
         for i in range(len(x_coordinates) - 1):
             intersections.append(round((x_coordinates[i] + x_coordinates[i + 1]) / 2, 2))
-        theta_f = theta.copy()
-        for angle in theta:
-            if (180 - angle) not in theta_f:
-                theta_f.append(180 - angle)
-        new = []
-        for angle in theta_f:
+        list_theta_complete = list_theta1.copy()
+        for angle in list_theta1:
+            if (180 - angle) not in list_theta_complete:
+                list_theta_complete.append(180 - angle)#append the symmetric
+        list_theta_c_rad = []
+        list_theta_complete.sort()
+        if list_theta_complete[0] == list_theta_complete[-1] - 360:
+            list_theta_complete.remove(270)
+        for angle in list_theta_complete:
             if angle >= 0:
                 val = np.pi / 180 * angle
-                new.append(val)
+                list_theta_c_rad.append(val)
             else:
                 val = (np.pi / 180) * (360 + angle)
-                new.append(val)
-        new.sort()
-        theta_f.sort()
-        if theta_f[0] == theta_f[-1] - 360:
-            theta_f.remove(270)
-        theta = new  # end of the calcul of the angles in radians
+                list_theta_c_rad.append(val)
+        list_theta_c_rad.sort()
+        theta = list_theta_c_rad  # end of the calcul of the angles in radians
         m_int = {}
         count_mom = 0
         for inter in intersections:
             m_int[inter] = {}
-            for theta3 in theta_f:
-                m_int[inter][theta3] = {}
+            for mu1 in list_theta_complete:
+                m_int[inter][mu1] = {}
         file = open(self.filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
         for line in the_lines:
@@ -466,61 +466,54 @@ class Analysis:
                         ex_wv_spd = None
                         ex_wv_freq = None
                         count_mom = 0
-        res_func_int = {}
-        list_x=[]
-        list_test=[]
-        for x, m_angle in m_int.items():
-            list_x.append(x)
-            res2 = {}
-            res_func_angle = {}
-            for theta2, m_freq in m_angle.items():
+        m_n_along_x = {}
+        for x, m_n_mu in m_int.items():
+            int_mu = {}
+            int_freq_func_mu = {}
+            for mu, m_freq in m_n_mu.items():
                 freqs = list(m_freq.keys())
                 freqs = sorted(freqs, key=lambda x: x[0])
-                vals = {}
-                list_freq1 = []
+                print(freqs)
+                vals_mn = {}
+                list_freq = []
                 for freq in freqs:
                     freq_th = freq[0]
                     freq_e = freq[1]
-                    if theta2==90 and freq_th==0.5:
-                        list_test.append(m_int[x][theta2][freq])
-                        print("test")
-                    list_freq1.append(freq_th)
-                    vals[freq_th]=((abs(freq_e) ** n) * (m_int[x][theta2][freq] ** 2) * hull.JONSWAP(abs(freq_e) / 2 / np.pi))
-                list_freq1.sort()
+                    list_freq.append(freq_th)
+                    vals_mn[freq_th]=((abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
+                    # print(m_int[x][theta2][freq]/9.80665,x,theta2,freq) ³checker les valeur
+                # print(vals)
+                list_freq.sort()
                 list_int1=[]
-                for f1 in list_freq1:
-                    list_int1.append(vals[f1])
-                res = simpson(list_int1, list_freq1)
-                if pd.isna(res):
-                    res=0
-                res_func_angle[theta2] = res
-            angles = list(m_angle.keys())
-            for angle in angles:
-                res2[angle] = (res_func_angle[angle] * hull.spread_func_int(angle,10))
-            les_res = {}
-            for theta4, res4 in res2.items():
+                for f1 in list_freq:
+                    list_int1.append(vals_mn[f1])
+                int_func_freqs = simpson(list_int1, list_freq)
+                if pd.isna(int_func_freqs):
+                    int_func_freqs=0
+                int_freq_func_mu[mu] = int_func_freqs * hull.spread_func_int(mu,10)
+                # print(theta2,hull.spread_func_int(theta2,10))
+            les_res={}
+            for theta4, res4 in int_freq_func_mu.items():
                 if theta4 < 0:
                     angle_fin = (theta4 + 360) * np.pi / 180
                 else:
                     angle_fin = theta4 * np.pi / 180
                 les_res[angle_fin] = res4
-            mu = list(les_res.keys())
-            mu.sort()
+            list_mu = list(les_res.keys())
+            list_mu.sort()
             les_y = []
-            for val1 in mu:
+            for val1 in list_mu:
                 les_y.append(les_res[val1])
-            res3 = simpson(les_y, mu)
-            res_func_int[x] = res3
-        les_x = list(res_func_int.keys())
+            res3 = simpson(les_y, list_mu)
+            m_n_along_x[x] = res3
+        les_x = list(m_n_along_x.keys())
         les_x.sort()
         file2 = open("mn_opt_res", "w", encoding="utf-8")
         for x in les_x:
-            file2.write(str(x) + " " + str(res_func_int[x]) + "\n")
-        max_key = max(res_func_int, key=res_func_int.get)
-        print(max_key, res_func_int[max_key])
-        plt.plot(list_x,list_test)
-        plt.show()
-        return res_func_int
+            file2.write(str(x) + " " + str(m_n_along_x[x]) + "\n")
+        max_key = max(m_n_along_x, key=m_n_along_x.get)
+        print(max_key, m_n_along_x[max_key])
+        return m_n_along_x
 
     def max_BM_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
                         alpha):
