@@ -208,6 +208,7 @@ def graph_many_wave_angle(filename: str, speed: float, wave_length,
     example_wave_length = 0
     text_fonction = "wave angle"
     list_wave_angle=np.arange(0,190,30)
+    print(list_wave_angle)
     if len(list_wave_angle) == 0:
         return
     for i in range(len(list_wave_angle)):
@@ -391,4 +392,3 @@ graph_many_wave_angle("pdstrip.out.ok",0,540.3,"absolute",135)
 # graph_file_for_one_wave("pdstrip.out.ok", 104.72, 180, 0, "real", True, True, "speed")
 # graph_file_for_one_wave("pdstrip.out.ok", 385.11, 0, 0, "real", True, True, "speed")
 # print(extreme_point)
-
