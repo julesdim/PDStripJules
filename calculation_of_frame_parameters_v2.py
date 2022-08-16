@@ -104,8 +104,8 @@ def Writing_of_the_PDstrip_input_file(masses_filename: str, coordinates_filename
 
 masses1 = "masses1.csv"
 shape1 = "barge_standaard_pias_text_file.txt"
-masses2 = "south_PIAS.csv"
-masses2 = "oural ballaste.csv"
+masses2 = "test2.csv"
+# masses2 = "North route.csv"
 shape2 = "oural_standaard_pias_text_file.txt"
 Writing_of_the_PDstrip_input_file(masses1, shape1, 100)
 D=11000/4.17*100

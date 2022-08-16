@@ -108,6 +108,8 @@ def graph_file_for_one_wave(filename: str, wave_length: float, wave_angle: float
         legend = str(wave_speed)
     if text_fonction == "wave length":
         legend = str(wave_length)
+    if text_fonction == "wave angle":
+        legend = str(wave_angle)
     for i in range(n_all_graph):
         list_subplot[i].plot(list_x_coordinates, all_graph[i], label=legend)
         plt.grid()
@@ -175,6 +177,48 @@ def graph_many_wave_length(filename: str, first_wave_length: float, last_wave_le
                                 text_fonction, Lpp)
     return
 
+def graph_many_wave_angle(filename: str, speed: float, wave_length,
+                           text: str, Lpp: float):
+    """That function plots 2 graphs with the first the shear forces for different wave length and the second one the
+    bending moment for the same wave lengths.
+
+    :argument
+    -----------
+    filename: a str
+        that is the name of the result file where the results for all the wave length is saved
+    first_wave_length: a float
+        that is the first wave length that we want plot. We will print all the graphs for the wave lengths greater than
+        this value (in m)
+    last_wave_length: a float
+        that is the last wave length that we want plot. We will print all the graphs for the wave length lower than this
+        value (in m)
+    speed: a float
+        that is the speed of the ship for the results plotted (in m/s)
+    angle: a float
+        that is the angle of the incident waves, for every graph (in degree)
+    text: 3 possibilities, "real", "imaginary" or "absolute", to plot the value wanted by the user of the shear forces
+    or the bending moment.
+    Lpp: a float
+        length between perpendiculars (in m)"""
+    list_wave_length = []
+    bool_initialisation = True
+    file = open(filename, "r", encoding="utf-8")
+    the_lines = csv.reader(file)
+    boolean_print = False
+    example_wave_length = 0
+    text_fonction = "wave angle"
+    list_wave_angle=np.arange(0,190,30)
+    if len(list_wave_angle) == 0:
+        return
+    for i in range(len(list_wave_angle)):
+        wave_angle = list_wave_angle[i]
+        if i == 1:
+            bool_initialisation = False
+        if i == len(list_wave_length) - 1:
+            boolean_print = True
+        graph_file_for_one_wave(filename, wave_length, wave_angle, speed, text, boolean_print, bool_initialisation,
+                                text_fonction, Lpp)
+    return
 
 def graph_many_speed(filename: str, first_speed: float, last_speed: float, wave_length: float, angle: float, text: str,
                      Lpp: float):
@@ -335,16 +379,16 @@ def printing_the_extreme_point(filename: str, text: str, Lpp: float):
             extreme_point_bending_moments, wave_length_extremebm, speed_extremebm, angle_extremebm,
             x_coordinate_extremebm)
 
-
+graph_many_wave_angle("pdstrip.out.ok",0,540.3,"absolute",135)
 # graph_file_for_one_wave("pdstrip.out.ok", 183.17, 0, 0, "real", True, True, "speed")
-graph_many_wave_length("pdstrip.out.ok", 100, 7000, 0, 0, "real", 135)
-graph_many_wave_length("pdstrip.out.ok", 100, 7000, 4.17, 0, "real", 135)
-graph_many_speed("pdstrip.out.ok", 0, 5, 540.3, 0, "real", 135)
-graph_many_speed("pdstrip.out.ok", 0, 5, 299.31, 0, "real", 135)
-graph_many_speed("pdstrip.out.ok", 0, 5, 206.27, 0, "real", 135)
-extreme_point = printing_the_extreme_point("pdstrip.out.ok", "real", 135)
+# graph_many_wave_length("pdstrip.out.ok", 100, 7000, 0, 0, "real", 135)
+# graph_many_wave_length("pdstrip.out.ok", 100, 7000, 4.17, 0, "real", 135)
+# graph_many_speed("pdstrip.out.ok", 0, 5, 540.3, 0, "real", 135)
+# graph_many_speed("pdstrip.out.ok", 0, 5, 299.31, 0, "real", 135)
+# graph_many_speed("pdstrip.out.ok", 0, 5, 206.27, 0, "real", 135)
+# extreme_point = printing_the_extreme_point("pdstrip.out.ok", "real", 135)
 # frequence de resonnance de 0.269 et frequence de 0.218 (pour 246.47 de frequence de resonance) et de 0.316 pour 171.16
 # graph_file_for_one_wave("pdstrip.out.ok", 104.72, 180, 0, "real", True, True, "speed")
 # graph_file_for_one_wave("pdstrip.out.ok", 385.11, 0, 0, "real", True, True, "speed")
-print(extreme_point)
+# print(extreme_point)
 
