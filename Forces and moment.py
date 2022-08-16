@@ -221,6 +221,7 @@ def graph_many_wave_angle(filename: str, speed: float, wave_length,
                                 text_fonction, Lpp)
     return
 
+
 def graph_many_speed(filename: str, first_speed: float, last_speed: float, wave_length: float, angle: float, text: str,
                      Lpp: float):
     """That function plots 2 graphs with the first the shear forces for different speeds and the second one the
