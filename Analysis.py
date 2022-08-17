@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import simpson
 import pandas as pd
 
+
 class Analysis:
     """A simple class to define a file to analyse with the functions defined.
 
@@ -416,7 +417,7 @@ class Analysis:
         list_theta_complete = list_theta1.copy()
         for angle in list_theta1:
             if (180 - angle) not in list_theta_complete:
-                list_theta_complete.append(180 - angle)#append the symmetric
+                list_theta_complete.append(180 - angle)  # append the symmetric
         list_theta_c_rad = []
         list_theta_complete.sort()
         if list_theta_complete[0] == list_theta_complete[-1] - 360:
@@ -458,7 +459,7 @@ class Analysis:
                 if line_formatted[0] == "Force":
                     ex_int = float(line_formatted[1])
                 if line_formatted[0] == "Moment":
-                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[6])*9.80665
+                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[4]) * 9.80665/(ex_wv_freq)**2
                     count_mom += 1
                     if count_mom == nb_intersections:
                         bool_complete_wv = True
@@ -468,43 +469,26 @@ class Analysis:
                         count_mom = 0
         m_n_along_x = {}
         for x, m_n_mu in m_int.items():
-            int_mu = {}
             int_freq_func_mu = {}
             for mu, m_freq in m_n_mu.items():
                 freqs = list(m_freq.keys())
                 freqs = sorted(freqs, key=lambda x: x[0])
-                print(freqs)
                 vals_mn = {}
-                list_freq = []
                 for freq in freqs:
                     freq_th = freq[0]
                     freq_e = freq[1]
-                    list_freq.append(freq_th)
-                    vals_mn[freq_th]=((abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
-                    # print(m_int[x][theta2][freq]/9.80665,x,theta2,freq) ³checker les valeur
-                # print(vals)
-                list_freq.sort()
-                list_int1=[]
-                for f1 in list_freq:
-                    list_int1.append(vals_mn[f1])
-                int_func_freqs = simpson(list_int1, list_freq)
+                    vals_mn[abs(freq_th)] = (
+                                (abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
+                list1=list(vals_mn.keys())
+                list_int=[]
+                list1.sort()
+                for freq1 in list1:
+                    list_int.append(vals_mn[freq1])
+                int_func_freqs = simpson(list_int, list1)
                 if pd.isna(int_func_freqs):
-                    int_func_freqs=0
-                int_freq_func_mu[mu] = int_func_freqs * hull.spread_func_int(mu,10)
-                # print(theta2,hull.spread_func_int(theta2,10))
-            les_res={}
-            for theta4, res4 in int_freq_func_mu.items():
-                if theta4 < 0:
-                    angle_fin = (theta4 + 360) * np.pi / 180
-                else:
-                    angle_fin = theta4 * np.pi / 180
-                les_res[angle_fin] = res4
-            list_mu = list(les_res.keys())
-            list_mu.sort()
-            les_y = []
-            for val1 in list_mu:
-                les_y.append(les_res[val1])
-            res3 = simpson(les_y, list_mu)
+                    int_func_freqs = 0
+                int_freq_func_mu[mu*np.pi/180] = int_func_freqs * hull.spread_func_int(mu,10)
+            res3 = simpson(list(int_freq_func_mu.values()), list(int_freq_func_mu.keys()))
             m_n_along_x[x] = res3
         les_x = list(m_n_along_x.keys())
         les_x.sort()
@@ -518,7 +502,7 @@ class Analysis:
     def max_BM_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
                         alpha):
         the_angles = np.arange(0, 190, 45)
-        file = open("res_BM_func_dir"+str(speed), "w", encoding="utf-8")
+        file = open("res_BM_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
             hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
             m0 = self.m_n_improved(0, hull, distance_from_neutral_axis)

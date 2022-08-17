@@ -92,8 +92,7 @@ class Hull:
         Hs = self.significant_wave_height
         gamma = self.gamma
         # Checked with Excel
-        return (1 / (2 * np.pi)) * np.sqrt(
-            ((1.555 + 0.2596 * gamma - 0.02231 * (gamma ** 2) + 0.001142 * (gamma ** 3)) * g * np.sqrt(alpha)) / Hs)
+        return (1/2/np.pi) * np.sqrt(((1.555 + 0.2596 * gamma - 0.02231 * (gamma ** 2) + 0.001142 * (gamma ** 3)) * g * np.sqrt(alpha)) / Hs)
 
     def plot_JONSWAP(self, f_start: float, f_end: float, step: float):
         """That function permits to plot the graph of the JONSWAP, for the frequencies between f_start and f_end, with
@@ -111,7 +110,7 @@ class Hull:
         :returns
         ----------
         It prints the graph of the JONSWAP function"""
-        les_f = np.arange(f_start, f_end, step)
+        les_f = np.arange(f_start, f_end, step)/2/np.pi
         les_y = []
         for f in les_f:
             y = self.JONSWAP(f)

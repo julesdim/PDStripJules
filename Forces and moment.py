@@ -78,8 +78,6 @@ def graph_file_for_one_wave(filename: str, wave_length: float, wave_angle: float
         if line_formatted[0] == "Number":
             number_of_section = float(line_formatted[3])
         if example_wave_length == wave_length and example_wave_angle == wave_angle and example_wave_speed == wave_speed:
-            if wave_angle==0:
-                print("hey")
             if line_formatted[0] == "Force":
                 x_coordinate = float(line_formatted[1]) + Lpp / 2
                 element_force_z = float(line_formatted[8 + constant])
@@ -210,7 +208,7 @@ def graph_many_wave_angle(filename: str, speed: float, wave_length,
     boolean_print = False
     example_wave_length = 0
     text_fonction = "wave angle"
-    list_wave_angle = np.arange(0, 100, 30)
+    list_wave_angle = np.arange(0, 190, 30)
     if len(list_wave_angle) == 0:
         return
     for i in range(len(list_wave_angle)):
@@ -384,11 +382,11 @@ def printing_the_extreme_point(filename: str, text: str, Lpp: float):
             x_coordinate_extremebm)
 
 
-graph_many_wave_angle("pdstrip.out.ok", 0, 20.88, "absolute", 135)
-graph_file_for_one_wave("pdstrip.out.ok", 206.27,90, 0, "absolute", True, True, "speed",135)
+# graph_many_wave_angle("pdstrip.out.ok", 0, 27.2, "absolute", 135)
+# graph_file_for_one_wave("pdstrip.out.ok", 206.27,90, 0, "absolute", True, True, "speed",135)
 # graph_many_wave_length("pdstrip.out.ok", 100, 7000, 0, 0, "real", 135)
 # graph_many_wave_length("pdstrip.out.ok", 100, 7000, 4.17, 0, "real", 135)
-# graph_many_speed("pdstrip.out.ok", 0, 5, 540.3, 0, "real", 135)
+graph_many_speed("pdstrip.out.ok", 0, 5, 206.27, 0, "real", 135)
 # graph_many_speed("pdstrip.out.ok", 0, 5, 299.31, 0, "real", 135)
 # graph_many_speed("pdstrip.out.ok", 0, 5, 206.27, 0, "real", 135)
 # extreme_point = printing_the_extreme_point("pdstrip.out.ok", "real", 135)
