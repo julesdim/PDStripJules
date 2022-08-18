@@ -203,10 +203,12 @@ class Form:
         ax.scatter(list_x_coordinates, list_y_coordinates, list_z_coordinates, label="courbe", marker='d')
         coeff=list_x_coordinates.max()-list_x_coordinates.min()
         prop=(list_y_coordinates.max()-list_y_coordinates.min())/(list_z_coordinates.max()-list_z_coordinates.min())
-        coeffy=1/prop*coeff/100*(list_y_coordinates.max()-list_y_coordinates.min())
-        coeffz=prop*coeff/100*(list_z_coordinates.max()-list_z_coordinates.min())
-        ax.auto_scale_xyz([-list_x_coordinates.max(),list_x_coordinates.max()],[-coeffy*list_y_coordinates.max(),coeffy*list_y_coordinates.max()*2],[-coeffz*list_z_coordinates.max(),coeffz*list_z_coordinates.max()])
-        ax.set_box_aspect((1,1/coeffy,1/coeffz),zoom=2)
+        coeffy=coeff/(list_y_coordinates.max()-list_y_coordinates.min())
+        coeffz=coeff/(list_z_coordinates.max()-list_z_coordinates.min())
+        n=6
+        test=3
+        ax.auto_scale_xyz([-list_x_coordinates.max(),list_x_coordinates.max()],[-(1+n/test)*list_y_coordinates.max(),(1+n/test)*list_y_coordinates.max()],[-(1+n/test)*list_z_coordinates.max(),(1+n/test)*list_z_coordinates.max()])
+        ax.set_box_aspect((1,n/2/coeffy,2*n/coeffz),zoom=1)
         # ax.get_autoscalez_on()
         # ax.set_aspect('equal')
         # ax.set_xlabel('x-axis in meter')
