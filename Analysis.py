@@ -562,7 +562,7 @@ class Analysis:
                     --------
                     Nothing
                     It creates one file where each maximum Bending Moment for each intersection and every direction
-                    are saved. Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
+                    are saved. The file is titled "res_BM_func_dir"+str(speed). Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
                     every direction.
                     """
         the_angles = np.arange(0, 190, 45)
@@ -592,6 +592,37 @@ class Analysis:
 
     def max_BM_func_spd(self, significant_wav_height, gamma, list_speed, coeff_wave, deep, distance_from_neutral_axis,
                         angle, D, alpha):
+        """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
+                order moment. This is a very optimized method, because it requires only one reading of the file.
+                    :argument
+                    ---------
+                    significant_wave_height: a float
+                        It is the half of the maximum wave height (in m)
+                    gamma: a float
+                        It is the gamma coefficient in the JONSWAP formula
+                    list_speed: a list
+                        It is a list of the ship speed for which we want to plot the Bending moments (in m/s)
+                    coeff_wave: a float
+                        It is the coefficient for the function of the angular repartition. The function is
+                        cosinus(angle)**(2*coeff_wave)
+                    deep: a float
+                        The deep of the water for the hull case (in meter)
+                    distance_from_neutral_axis: a float
+                        the distance of the neutral axis from the baseline (in meter)
+                    angle: a float
+                        The main direction of the hull (in degrees)
+                    D: a float
+                        The time spent in the seaway of the ship for a certain period (in seconds)
+                    alpha: a float
+                        The probability the Bending moment exceed the final value
+                    :returns
+                    --------
+                    Nothing
+                    It creates one file where each maximum Bending Moment for each intersection for every speed are
+                    saved. The file is titled "res_BM_func_spd.txt".
+                    Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
+                    every speed.
+                    """
         file = open("res_BM_func_spd", "w", encoding="utf-8")
         for spd in list_speed:
             hull = Hll.Hull(significant_wav_height, gamma, spd, coeff_wave, deep, angle)
@@ -609,21 +640,32 @@ class Analysis:
             max_key = max(max_BM, key=max_BM.get)
             print(max_key, max_BM[max_key])
             print(spd)
-            plt.plot(inter, max_BM.values(), label=str(spd))
+            plt.plot(inter, max_BM.values(), label=str(spd)+ " m/s")
+            plt.xlabel("Position along the x-axis in m")
+            plt.ylabel("Bending Moments in kN.m")
             plt.legend()
         plt.show()
         file.close()
-
-    def m_n_func_wv_height(self, n, list_significant_wav_height, gamma, speed, coeff_wave, deep,
-                           distance_from_neutral_axis, angle):
-        for wv_height in list_significant_wav_height:
-            hull = Hll.Hull(wv_height, gamma, speed, coeff_wave, deep, angle)
-            res = self.m_n_improved(n, hull, distance_from_neutral_axis)
-            plt.plot(list(res.keys()), list(res.values()), label=str(wv_height))
-            plt.legend()
-        plt.show()
-
-    def print_filewritting_max_BM(self, hull, dist, D, alpha):
+    def print_filewritting_max_BM(self, hull, distance_from_neutral_axis, D, alpha):
+        """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
+                order moment. This is a very optimized method, because it requires only one reading of the file.
+                    :argument
+                    ---------
+                    hull: a Hll.Hull object
+                        It is the hull for or which we will calculate the moment
+                    distance_from_neutral_axis: a float
+                        distance between the baseline and the neutral axis for the computation of the
+                        bending moment (in m)
+                    D: a float
+                        The time spent in the seaway of the ship for a certain period (in seconds)
+                    alpha: a float
+                        The probability the Bending moment exceed the final value
+                    :returns
+                    --------
+                    Nothing
+                    It creates one file for a very precise hull, titled "max_BM". It will print one graph of the maximum
+                    Bending moments along the x_axis.
+                    """
         m0 = self.m_n_improved(0, hull, dist)
         m2 = self.m_n_improved(2, hull, dist)
         inter = list(m0.keys())
@@ -637,4 +679,6 @@ class Analysis:
         max_key = max(max_BM, key=max_BM.get)
         print(max_key, max_BM[max_key])
         plt.plot(inter, max_BM.values())
+        plt.xlabel("Position along the x-axis in m")
+        plt.ylabel("Bending Moments in kN.m")
         plt.show()
