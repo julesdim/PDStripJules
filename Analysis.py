@@ -249,6 +249,22 @@ class Analysis:
             file_written.write(str(list_x[i]) + " " + str(forces[i]) + " " + str(moments[i]) + "\n")
 
     def m_n(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float):
+        """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
+        order moment. This is a very long method because it needs a numerous reading of the file.
+
+                        :argument
+                        ---------
+                        n: an int
+                            It is the order of the moment computed
+                        hull: a Hll.Hull object
+                            It is the hull for or which we will calculate the moment
+                        distance_from_neutral_axis: a float
+                            distance between the baseline and the neutral axis for the computation of the bending moment (in m)
+                        :returns
+                        --------
+                        m_int: a dict
+                            It is all the values of the moment associated to each intersection.
+                        """
         g = 9.80665
         file = open(self.filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
@@ -368,9 +384,26 @@ class Analysis:
         file2 = open("m_n_res", 'w', encoding="utf-8")
         for x, mn in m_int.items():
             file2.write(str(x) + " " + str(mn) + "\n")
-        return max(m_int, key=m_int.get)
+        return m_int
 
     def m_n_improved(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float):
+        """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
+                order moment. This is a very optimized method, because it requires only one reading of the file.
+
+                                :argument
+                                ---------
+                                n: an int
+                                    It is the order of the moment computed
+                                hull: a Hll.Hull object
+                                    It is the hull for or which we will calculate the moment
+                                distance_from_neutral_axis: a float
+                                    distance between the baseline and the neutral axis for the computation of the
+                                    bending moment (in m)
+                                :returns
+                                --------
+                                m_n_along_x_axis: a dict
+                                    It is all the values of the moment associated to each intersection.
+                                """
         g = 9.80665
         file = open(self.filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
@@ -504,6 +537,34 @@ class Analysis:
 
     def max_BM_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
                         alpha):
+        """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
+                order moment. This is a very optimized method, because it requires only one reading of the file.
+                    :argument
+                    ---------
+                    significant_wave_height: a float
+                        It is the half of the maximum wave height (in m)
+                    gamma: a float
+                        It is the gamma coefficient in the JONSWAP formula
+                    speed: a float
+                        It is the ship speed in the hull (in m/s)
+                    coeff_wave: a float
+                        It is the coefficient for the function of the angular repartition. The function is
+                        cosinus(angle)**(2*coeff_wave)
+                    deep: a float
+                        The deep of the water for the hull case (in meter)
+                    distance_from_neutral_axis: a float
+                        the distance of the neutral axis from the baseline (in meter)
+                    D: a float
+                        The time spent in the seaway of the ship for a certain period (in seconds)
+                    alpha: a float
+                        The probability the Bending moment exceed the final value
+                    :returns
+                    --------
+                    Nothing
+                    It creates one file where each maximum Bending Moment for each intersection and every direction
+                    are saved. Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
+                    every direction.
+                    """
         the_angles = np.arange(0, 190, 45)
         file = open("res_BM_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
@@ -522,7 +583,9 @@ class Analysis:
             max_key = max(max_BM, key=max_BM.get)
             print(max_key, max_BM[max_key])
             print(angle)
-            plt.plot(inter, max_BM.values(), label=str(angle))
+            plt.plot(inter, max_BM.values(), label=str(angle)+" degrees")
+            plt.xlabel("Position along the x-axis in m")
+            plt.ylabel("Bending Moments in kN.m")
             plt.legend()
         plt.show()
         file.close()
