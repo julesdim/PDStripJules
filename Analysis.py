@@ -457,9 +457,12 @@ class Analysis:
                 ex_wv_spd = float(line_formatted[1])
             if ex_wv_spd == hull.speed and not bool_complete_wv:
                 if line_formatted[0] == "Force":
+                    element_force_x = float(line_formatted[4])
                     ex_int = float(line_formatted[1])
                 if line_formatted[0] == "Moment":
-                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[4]) * 9.80665/(ex_wv_freq)**2
+                    m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = (float(line_formatted[6]) +
+                                                                              element_force_x * distance_from_neutral_axis) * 9.80665 / (
+                                                                                         (ex_wv_freq) ** 2)
                     count_mom += 1
                     if count_mom == nb_intersections:
                         bool_complete_wv = True
@@ -478,16 +481,16 @@ class Analysis:
                     freq_th = freq[0]
                     freq_e = freq[1]
                     vals_mn[abs(freq_th)] = (
-                                (abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
-                list1=list(vals_mn.keys())
-                list_int=[]
+                            (abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
+                list1 = list(vals_mn.keys())
+                list_int = []
                 list1.sort()
                 for freq1 in list1:
                     list_int.append(vals_mn[freq1])
                 int_func_freqs = simpson(list_int, list1)
                 if pd.isna(int_func_freqs):
                     int_func_freqs = 0
-                int_freq_func_mu[mu*np.pi/180] = int_func_freqs * hull.spread_func_int(mu,10)
+                int_freq_func_mu[mu * np.pi / 180] = int_func_freqs * hull.spread_func_int(mu, 10)
             res3 = simpson(list(int_freq_func_mu.values()), list(int_freq_func_mu.keys()))
             m_n_along_x[x] = res3
         les_x = list(m_n_along_x.keys())
