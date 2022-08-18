@@ -575,7 +575,7 @@ class Analysis:
                     every direction.
                     """
         the_angles = np.arange(0, 190, 45)
-        file = open("res_BM_func_dir" + str(speed), "w", encoding="utf-8")
+        file = open("res_"+text_var+"_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
             hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
             m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
@@ -593,14 +593,17 @@ class Analysis:
             print(max_key, max_BM_SF[max_key])
             print(angle)
             plt.plot(inter, max_BM_SF.values(), label=str(angle) + " degrees")
+            if text_var=="BM":
+                plt.ylabel("Bending Moments in kN.m")
+            if text_var=="SF":
+                plt.ylabel("Shear Forces in kN")
             plt.xlabel("Position along the x-axis in m")
-            plt.ylabel("Bending Moments in kN.m")
             plt.legend()
         plt.show()
         file.close()
 
-    def max_BM_func_spd(self, significant_wav_height, gamma, list_speed, coeff_wave, deep, distance_from_neutral_axis,
-                        angle, D, alpha):
+    def max_BM_SF_func_spd(self, significant_wav_height, gamma, list_speed, coeff_wave, deep, distance_from_neutral_axis,
+                        angle, D, alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
@@ -624,6 +627,9 @@ class Analysis:
                         The time spent in the seaway of the ship for a certain period (in seconds)
                     alpha: a float
                         The probability the Bending moment exceed the final value
+                    text_var: a str
+                                It is a text equal to BM or SF for Bending Moments or Shear Forces, to chose which
+                                graph we want to print.
                     :returns
                     --------
                     Nothing
@@ -632,11 +638,11 @@ class Analysis:
                     Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
                     every speed.
                     """
-        file = open("res_BM_func_spd", "w", encoding="utf-8")
+        file = open("res_"+text_var+"_func_spd", "w", encoding="utf-8")
         for spd in list_speed:
             hull = Hll.Hull(significant_wav_height, gamma, spd, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis)
+            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
+            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
             inter = list(m0.keys())
             max_BM = {}
             file.write(str(spd) + "\n")
@@ -651,12 +657,15 @@ class Analysis:
             print(spd)
             plt.plot(inter, max_BM.values(), label=str(spd) + " m/s")
             plt.xlabel("Position along the x-axis in m")
-            plt.ylabel("Bending Moments in kN.m")
+            if text_var=="BM":
+                plt.ylabel("Bending Moments in kN.m")
+            if text_var=="SF":
+                plt.ylabel("Shear Forces in kN")
             plt.legend()
         plt.show()
         file.close()
 
-    def print_filewritting_max_BM(self, hull, distance_from_neutral_axis, D, alpha):
+    def print_filewritting_max_BM_SF(self, hull, distance_from_neutral_axis, D, alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
@@ -670,25 +679,31 @@ class Analysis:
                         The time spent in the seaway of the ship for a certain period (in seconds)
                     alpha: a float
                         The probability the Bending moment exceed the final value
+                    text_var: a str
+                                It is a text equal to BM or SF for Bending Moments or Shear Forces, to chose which
+                                graph we want to print.
                     :returns
                     --------
                     Nothing
                     It creates one file for a very precise hull, titled "max_BM". It will print one graph of the maximum
                     Bending moments along the x_axis.
                     """
-        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis)
-        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis)
+        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
+        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
         inter = list(m0.keys())
-        max_BM = {}
-        file = open("max_BM", "w", encoding="utf-8")
+        max_BM_SF = {}
+        file = open("max_"+text_var, "w", encoding="utf-8")
         for x in inter:
-            max_BM[x] = (np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(m0[x]))
+            max_BM_SF[x] = (np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(m0[x]))
             file.write(str(x) + " " + str(
                 np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(m0[x])) + "\n")
         file.close()
-        max_key = max(max_BM, key=max_BM.get)
-        print(max_key, max_BM[max_key])
-        plt.plot(inter, max_BM.values())
+        max_key = max(max_BM_SF, key=max_BM_SF.get)
+        print(max_key, max_BM_SF[max_key])
+        plt.plot(inter, max_BM_SF.values())
         plt.xlabel("Position along the x-axis in m")
-        plt.ylabel("Bending Moments in kN.m")
+        if text_var == "BM":
+            plt.ylabel("Bending Moments in kN.m")
+        if text_var == "SF":
+            plt.ylabel("Shear Forces in kN")
         plt.show()
