@@ -1,9 +1,9 @@
+import matplotlib.projections
 import numpy as np
 import matplotlib.pyplot as plt
 import Frames as fr
 import Loading as ld
 import csv
-
 
 class Form:
     """That a class to define the form of the ship, it's a list of frame
@@ -198,10 +198,22 @@ class Form:
         list_y_coordinates = np.array(list_y_coordinates)
         list_x_coordinates = np.array(list_x_coordinates)
         fig = plt.figure()
-        ax = fig.gca(projection="3d")
+        ax = matplotlib.projections.Axes3D (fig)
+        fig.add_axes(ax)
         ax.scatter(list_x_coordinates, list_y_coordinates, list_z_coordinates, label="courbe", marker='d')
-        ax.set_title('Hull shape')
-        plt.tight_layout()
+        coeff=list_x_coordinates.max()-list_x_coordinates.min()
+        prop=(list_y_coordinates.max()-list_y_coordinates.min())/(list_z_coordinates.max()-list_z_coordinates.min())
+        coeffy=1/prop*coeff/100*(list_y_coordinates.max()-list_y_coordinates.min())
+        coeffz=prop*coeff/100*(list_z_coordinates.max()-list_z_coordinates.min())
+        ax.auto_scale_xyz([-list_x_coordinates.max(),list_x_coordinates.max()],[-coeffy*list_y_coordinates.max(),coeffy*list_y_coordinates.max()*2],[-coeffz*list_z_coordinates.max(),coeffz*list_z_coordinates.max()])
+        ax.set_box_aspect((1,1/coeffy,1/coeffz),zoom=2)
+        # ax.get_autoscalez_on()
+        # ax.set_aspect('equal')
+        # ax.set_xlabel('x-axis in meter')
+        # ax.set_ylabel('y-axis in meter')
+        # ax.set_zlabel('z-axis in meter')
+        # ax.set_title('Hull shape')
+        #plt.tight_layout()
         plt.show()
 
     def plot_one_frame(self, x: float):
@@ -224,6 +236,8 @@ class Form:
                     list_x_coordinates.append(coordinate[0])
                     list_y_coordinates.append(coordinate[1])
         plt.plot(list_x_coordinates, list_y_coordinates)
+        plt.xlabel("X-axis in m")
+        plt.ylabel("Z-axis in m")
         plt.show()
 
     def checking(self):

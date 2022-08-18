@@ -29,6 +29,7 @@ def conversion_for_pdstrip_xaxis(x: float, midship: float):
      """
     return x - midship
 
+
 def Writing_of_the_PDstrip_input_file(masses_filename: str, coordinates_filename: str, Lpp: float):
     """That function writes a file titled data_pdstrip_prev.csv with all the input data from the frames that needs the
     PDstrip program, that function needs the loading informations, the shape of the ship, and the length between
@@ -54,7 +55,7 @@ def Writing_of_the_PDstrip_input_file(masses_filename: str, coordinates_filename
     hull_form.correction_of_coordinates_for_up()
     hull_form.checking()
     hull_form.plotting()
-    weight_loading=ld.Loading()
+    weight_loading = ld.Loading()
     weight_loading.collection_of_mass(masses_filename)
     weight_loading.pdstrip_coordinates_conversion(Lpp / 2)
     weight_loading.plot_loading(-Lpp / 2, Lpp / 2)
@@ -107,17 +108,17 @@ shape1 = "barge_standaard_pias_text_file.txt"
 masses2 = "test2.csv"
 # masses2 = "North route.csv"
 shape2 = "oural_standaard_pias_text_file.txt"
-# Writing_of_the_PDstrip_input_file(masses1, shape1, 100)
-D=11000/4.17*100
-pdstrip=Anls.Analysis("pdstrip.out.ok")
+Writing_of_the_PDstrip_input_file(masses2, shape2, 135)
+D = 11000 / 4.17 * 100
+pdstrip = Anls.Analysis("pdstrip.out.ok")
 hull_oural = Hll.Hull(0.6, 1.8, 4.17, 5, 7.56, 0)
 # hull_oural.plot_spreading(-90,270,10)
-hull_oural.plot_JONSWAP(0.1,2.5,0.08)
+# hull_oural.plot_JONSWAP(0.1,2.5,0.08)
 # res=pdstrip.m_n_improved(2, hull_oural, 1.821)
 # pdstrip.print_filewritting_max_BM(hull_oural,1.821,D,0.01)
 # list_wv_height=np.arange(0.5,3,0.5)
-pdstrip.max_BM_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01)
-pdstrip.max_BM_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01)
+# pdstrip.max_BM_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01)
+# pdstrip.max_BM_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01)
 # pdstrip.max_BM_func_spd(0.6,1.8,[0,4.17],5,7.56,1.821,135,D,0.01)
 
 

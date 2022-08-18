@@ -495,7 +495,7 @@ class Analysis:
                 if line_formatted[0] == "Moment":
                     m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = (float(line_formatted[6]) +
                                                                               element_force_x * distance_from_neutral_axis) * 9.80665 / (
-                                                                                         (ex_wv_freq) ** 2)
+                                                                                     (ex_wv_freq) ** 2)
                     count_mom += 1
                     if count_mom == nb_intersections:
                         bool_complete_wv = True
@@ -583,7 +583,7 @@ class Analysis:
             max_key = max(max_BM, key=max_BM.get)
             print(max_key, max_BM[max_key])
             print(angle)
-            plt.plot(inter, max_BM.values(), label=str(angle)+" degrees")
+            plt.plot(inter, max_BM.values(), label=str(angle) + " degrees")
             plt.xlabel("Position along the x-axis in m")
             plt.ylabel("Bending Moments in kN.m")
             plt.legend()
@@ -640,12 +640,13 @@ class Analysis:
             max_key = max(max_BM, key=max_BM.get)
             print(max_key, max_BM[max_key])
             print(spd)
-            plt.plot(inter, max_BM.values(), label=str(spd)+ " m/s")
+            plt.plot(inter, max_BM.values(), label=str(spd) + " m/s")
             plt.xlabel("Position along the x-axis in m")
             plt.ylabel("Bending Moments in kN.m")
             plt.legend()
         plt.show()
         file.close()
+
     def print_filewritting_max_BM(self, hull, distance_from_neutral_axis, D, alpha):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
@@ -666,8 +667,8 @@ class Analysis:
                     It creates one file for a very precise hull, titled "max_BM". It will print one graph of the maximum
                     Bending moments along the x_axis.
                     """
-        m0 = self.m_n_improved(0, hull, dist)
-        m2 = self.m_n_improved(2, hull, dist)
+        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis)
+        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis)
         inter = list(m0.keys())
         max_BM = {}
         file = open("max_BM", "w", encoding="utf-8")

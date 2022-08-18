@@ -47,4 +47,7 @@ class Frames:
             list_x_coordinates.append(coord[0])
             list_y_coordinates.append(coord[1])
         plt.plot(list_x_coordinates, list_y_coordinates)
+        plt.xlabel("x-axis in meter")
+        plt.ylabel("z-axis in meter")
+        plt.title("Frame coordinate " + str(self.x_coordinate))
         plt.show()

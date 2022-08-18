@@ -82,6 +82,8 @@ class Loading:
                                                                  x_up) / delt_x  # element of weight for the strip
             linear_density.append(mass_element)  # we add to the list
         plt.plot(list_x_coordinates, linear_density)
+        plt.ylabel("Linear density in ton/m")
+        plt.xlabel("Position along the x-axis in m")
         plt.title("Linear density in ton per meter along the x axis")
         plt.show()
         return

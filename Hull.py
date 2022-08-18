@@ -101,11 +101,11 @@ class Hull:
         :argument
         ----------
         f_start: a float
-            The first frequency value for the plot, the frequency is a value in Hertz
+            The first frequency value for the plot, the frequency is a value in rad/s
         f_end: a float
-            The last frequency value for the plot(in Hertz)
+            The last frequency value for the plot in rad/s
         step: a float
-            The step between each frequency value(in Hertz)
+            The step between each frequency value in rad/s
 
         :returns
         ----------
@@ -116,6 +116,8 @@ class Hull:
             y = self.JONSWAP(f)
             les_y.append(y)
         plt.plot(les_f, les_y)
+        plt.xlabel("Frequencies in Hz")
+        plt.ylabel("JONSWAP function")
         plt.show()
 
     def spreading_func(self, theta: float):
@@ -138,25 +140,23 @@ class Hull:
         return el4
 
     def spread_func_int(self,theta,step):
+        """That functions permits to know the value of the spreading function a cos 2s function for a certain angle
+        theta
+
+        :argument
+        ----------
+        theta: a float
+            the angle in degree
+        :returns
+        ------------
+        spreading function: a float
+            the value of the spreading function for the angle theta
+        """
         s = self.coeff_wave
         gam1 = math.gamma(s + 1)
         gam2 = math.gamma(s + 0.5)
         int=quad(self.spreading_func,theta-step/2,theta+step/2)
         return int[0]*np.pi/180#*(gam1 * np.cos((theta) * np.pi / 180 / 2) ** (2 * s)) / (2 * np.sqrt(np.pi) * gam2)
-
-    def cos2s(self,theta):
-        return(2/np.pi*np.cos((theta-self.theta_mean)*np.pi/180/2)**(2))
-
-    def SM(self,theta,step,n,n_max):
-        if n==0 or n==n_max and -90<=theta-self.theta_mean<=90:
-            coeff=1
-        elif n%2==0and -90<=theta-self.theta_mean<=90:
-            coeff=2
-        elif n%2==1and -90<=theta-self.theta_mean<=90:
-            coeff=4
-        else :
-            coeff=0
-        return coeff/3*step*np.pi/180*self.cos2s(theta)
 
     def wave_spectrum(self, theta: float, f: float):
         """That function for a certain wave with an angle theta in degree and a frequency f in Hertz, returns the
@@ -196,4 +196,6 @@ class Hull:
             y = self.spread_func_int(theta,10)
             les_y.append(y)
         plt.plot(les_theta, les_y)
+        plt.xlabel("Angles in degrees")
+        plt.ylabel("Spreading function")
         plt.show()
