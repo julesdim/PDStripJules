@@ -386,7 +386,7 @@ class Analysis:
             file2.write(str(x) + " " + str(mn) + "\n")
         return m_int
 
-    def m_n_improved(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float):
+    def m_n_improved(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
 
@@ -399,6 +399,9 @@ class Analysis:
                                 distance_from_neutral_axis: a float
                                     distance between the baseline and the neutral axis for the computation of the
                                     bending moment (in m)
+                                text_var: a str
+                                    It is a text equal to BM or SF for Bending Moments or Shear Forces, to chose which
+                                    graph we want to print.
                                 :returns
                                 --------
                                 m_n_along_x_axis: a dict
@@ -492,7 +495,10 @@ class Analysis:
                 if line_formatted[0] == "Force":
                     element_force_x = float(line_formatted[4])
                     ex_int = float(line_formatted[1])
-                if line_formatted[0] == "Moment":
+                    if text_var=="SF":
+                        m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[7]) * 9.80665 / (
+                                                                                     (ex_wv_freq) ** 2)
+                if line_formatted[0] == "Moment" and text_var=="BM":
                     m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = (float(line_formatted[6]) +
                                                                               element_force_x * distance_from_neutral_axis) * 9.80665 / (
                                                                                      (ex_wv_freq) ** 2)
@@ -535,8 +541,8 @@ class Analysis:
         print(max_key, m_n_along_x[max_key])
         return m_n_along_x
 
-    def max_BM_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
-                        alpha):
+    def max_BM_SF_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
+                        alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
@@ -558,6 +564,9 @@ class Analysis:
                         The time spent in the seaway of the ship for a certain period (in seconds)
                     alpha: a float
                         The probability the Bending moment exceed the final value
+                    text_var: a str
+                                It is a text equal to BM or SF for Bending Moments or Shear Forces, to chose which
+                                graph we want to print.
                     :returns
                     --------
                     Nothing
@@ -569,21 +578,21 @@ class Analysis:
         file = open("res_BM_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
             hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis)
+            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
+            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
             inter = list(m0.keys())
-            max_BM = {}
+            max_BM_SF = {}
             file.write(str(angle) + "\n")
             for x in inter:
-                max_BM[x] = (np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(
+                max_BM_SF[x] = (np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(
                     m0[x]))
                 file.write(
                     str(x) + " " + str(np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(
                         m0[x])) + "\n")
-            max_key = max(max_BM, key=max_BM.get)
-            print(max_key, max_BM[max_key])
+            max_key = max(max_BM_SF, key=max_BM_SF.get)
+            print(max_key, max_BM_SF[max_key])
             print(angle)
-            plt.plot(inter, max_BM.values(), label=str(angle) + " degrees")
+            plt.plot(inter, max_BM_SF.values(), label=str(angle) + " degrees")
             plt.xlabel("Position along the x-axis in m")
             plt.ylabel("Bending Moments in kN.m")
             plt.legend()

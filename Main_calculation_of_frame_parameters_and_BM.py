@@ -117,8 +117,8 @@ hull_oural = Hll.Hull(0.6, 1.8, 4.17, 5, 7.56, 0)
 # res=pdstrip.m_n_improved(2, hull_oural, 1.821)
 # pdstrip.print_filewritting_max_BM(hull_oural,1.821,D,0.01)
 # list_wv_height=np.arange(0.5,3,0.5)
-# pdstrip.max_BM_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01)
-# pdstrip.max_BM_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01)
+pdstrip.max_BM_SF_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01,"SF")
+pdstrip.max_BM_SF_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01,"SF")
 # pdstrip.max_BM_func_spd(0.6,1.8,[0,4.17],5,7.56,1.821,135,D,0.01)
 
 
