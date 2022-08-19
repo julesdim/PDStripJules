@@ -61,7 +61,10 @@ class Mass:
                 print("pb")
             if real_end > self.x_end:
                 print("pb")
-            return quad(self.linear_density, real_start, real_end)[0]
+            if real_start!= self.x_start or real_end!=self.x_end:
+                return quad(self.linear_density, real_start, real_end)[0]
+            if real_start==self.x_start and real_end==self.x_end:
+                return self.weight
 
     def calcul_xg_mass(self):
         """That function permits to the user to compute X_CoG in function of linear density when the program calcul the

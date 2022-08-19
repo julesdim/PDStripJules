@@ -52,7 +52,9 @@ class Loading:
                                          z_coordinate_CoG, linear_density_x_beginning, linear_density_x_end)
                 if x_coordinate_CoG != (x_beginning + x_end) / 2:
                     current_mass.calcul_xg_not_the_mid()  # we compute the good linear density of the start and the end
-                    print(current_mass.linear_density_start, current_mass.linear_density_end)
+                    print(current_mass.x_coordinate_CoG)
+                if x_coordinate_CoG == (x_beginning + x_end) / 2:
+                    print(current_mass.x_coordinate_CoG)
                 self.__append__(current_mass)
         print(total_mass, "TOTAL")
 
@@ -168,7 +170,10 @@ class Loading:
                     print("pb")
                 real_mass = self.masses[i].calcul_mass(real_start, real_end)
                 # proportion of the weight situated between the section
-                X_CoG = self.masses[i].calcul_xg_coordinates(real_start, real_end)
+                if real_start!=x_start_mass or real_end!=x_end_mass:
+                    X_CoG = self.masses[i].calcul_xg_coordinates(real_start, real_end)
+                if real_start==x_start_mass and real_end==x_end_mass:
+                    X_CoG = self.masses[i].x_coordinate_CoG
                 X_CoG_glob += real_mass * X_CoG
                 Y_CoG_glob += real_mass * self.masses[i].y_coordinate_CoG
                 Z_CoG_glob += real_mass * self.masses[i].z_coordinate_CoG

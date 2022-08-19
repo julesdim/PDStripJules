@@ -259,7 +259,8 @@ class Analysis:
                         hull: a Hll.Hull object
                             It is the hull for or which we will calculate the moment
                         distance_from_neutral_axis: a float
-                            distance between the baseline and the neutral axis for the computation of the bending moment (in m)
+                            distance between the baseline and the neutral axis for the computation of the bending moment
+                            (in m)
                         :returns
                         --------
                         m_int: a dict
@@ -495,12 +496,12 @@ class Analysis:
                 if line_formatted[0] == "Force":
                     element_force_x = float(line_formatted[4])
                     ex_int = float(line_formatted[1])
-                    if text_var=="SF":
+                    if text_var == "SF":
                         m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[7]) * 9.80665 / (
-                                                                                     (ex_wv_freq) ** 2)
-                if line_formatted[0] == "Moment" and text_var=="BM":
+                                (ex_wv_freq) ** 2)
+                if line_formatted[0] == "Moment" and text_var == "BM":
                     m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = (float(line_formatted[6]) +
-                                                                              element_force_x * distance_from_neutral_axis) * 9.80665 / (
+                                                        element_force_x * distance_from_neutral_axis) * 9.80665 / (
                                                                                      (ex_wv_freq) ** 2)
                     count_mom += 1
                     if count_mom == nb_intersections:
@@ -542,7 +543,7 @@ class Analysis:
         return m_n_along_x
 
     def max_BM_SF_func_dir(self, significant_wav_height, gamma, speed, coeff_wave, deep, distance_from_neutral_axis, D,
-                        alpha, text_var):
+                           alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
@@ -575,11 +576,11 @@ class Analysis:
                     every direction.
                     """
         the_angles = np.arange(0, 190, 45)
-        file = open("res_"+text_var+"_func_dir" + str(speed), "w", encoding="utf-8")
+        file = open("res_" + text_var + "_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
             hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
+            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
+            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
             inter = list(m0.keys())
             max_BM_SF = {}
             file.write(str(angle) + "\n")
@@ -593,17 +594,17 @@ class Analysis:
             print(max_key, max_BM_SF[max_key])
             print(angle)
             plt.plot(inter, max_BM_SF.values(), label=str(angle) + " degrees")
-            if text_var=="BM":
+            if text_var == "BM":
                 plt.ylabel("Bending Moments in kN.m")
-            if text_var=="SF":
+            if text_var == "SF":
                 plt.ylabel("Shear Forces in kN")
             plt.xlabel("Position along the x-axis in m")
             plt.legend()
         plt.show()
         file.close()
 
-    def max_BM_SF_func_spd(self, significant_wav_height, gamma, list_speed, coeff_wave, deep, distance_from_neutral_axis,
-                        angle, D, alpha, text_var):
+    def max_BM_SF_func_spd(self, significant_wav_height, gamma, list_speed, coeff_wave, deep,
+                           distance_from_neutral_axis, angle, D, alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
@@ -638,11 +639,11 @@ class Analysis:
                     Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
                     every speed.
                     """
-        file = open("res_"+text_var+"_func_spd", "w", encoding="utf-8")
+        file = open("res_" + text_var + "_func_spd", "w", encoding="utf-8")
         for spd in list_speed:
             hull = Hll.Hull(significant_wav_height, gamma, spd, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
+            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
+            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
             inter = list(m0.keys())
             max_BM = {}
             file.write(str(spd) + "\n")
@@ -657,9 +658,9 @@ class Analysis:
             print(spd)
             plt.plot(inter, max_BM.values(), label=str(spd) + " m/s")
             plt.xlabel("Position along the x-axis in m")
-            if text_var=="BM":
+            if text_var == "BM":
                 plt.ylabel("Bending Moments in kN.m")
-            if text_var=="SF":
+            if text_var == "SF":
                 plt.ylabel("Shear Forces in kN")
             plt.legend()
         plt.show()
@@ -688,11 +689,11 @@ class Analysis:
                     It creates one file for a very precise hull, titled "max_BM". It will print one graph of the maximum
                     Bending moments along the x_axis.
                     """
-        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis,text_var)
-        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis,text_var)
+        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
+        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
         inter = list(m0.keys())
         max_BM_SF = {}
-        file = open("max_"+text_var, "w", encoding="utf-8")
+        file = open("max_" + text_var, "w", encoding="utf-8")
         for x in inter:
             max_BM_SF[x] = (np.sqrt(2 * np.log(D / 2 / np.pi / alpha * np.sqrt(m2[x] / m0[x]))) * np.sqrt(m0[x]))
             file.write(str(x) + " " + str(
