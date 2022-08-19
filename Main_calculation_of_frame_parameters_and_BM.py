@@ -78,7 +78,7 @@ def Writing_of_the_PDstrip_input_file(masses_filename: str, coordinates_filename
         file.write(str(input_value) + " ")
     file.write("\n")
     n = len(hull_form.shape)
-    for i in range(len(hull_form.shape) - 1):
+    for i in range(n - 1):
         print(i)
         back_section = (hull_form.shape[i].x_coordinate + hull_form.shape[i + 1].x_coordinate) / 2
         front_section = conversion_for_pdstrip_xaxis(Lpp, Lpp / 2)
@@ -108,7 +108,7 @@ shape1 = "barge_standaard_pias_text_file.txt"
 masses2 = "test2.csv"
 # masses2 = "North route.csv"
 shape2 = "oural_standaard_pias_text_file.txt"
-Writing_of_the_PDstrip_input_file(masses2, shape2, 135)
+# Writing_of_the_PDstrip_input_file(masses2, shape2, 135)
 D = 11000 / 4.17 * 100
 pdstrip = Anls.Analysis("pdstrip.out.ok")
 hull_oural = Hll.Hull(0.6, 1.8, 4.17, 5, 7.56, 0)
@@ -117,9 +117,9 @@ hull_oural = Hll.Hull(0.6, 1.8, 4.17, 5, 7.56, 0)
 # res=pdstrip.m_n_improved(2, hull_oural, 1.821)
 # pdstrip.print_filewritting_max_BM(hull_oural,1.821,D,0.01)
 # list_wv_height=np.arange(0.5,3,0.5)
-# pdstrip.max_BM_SF_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01,"SF")
-# pdstrip.max_BM_SF_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01,"SF")
-# pdstrip.max_BM_SF_func_spd(0.6,1.8,[0,4.17],5,7.56,1.821,135,D,0.01,"SF")
+pdstrip.max_BM_SF_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01,"SF")
+pdstrip.max_BM_SF_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01,"SF")
+# pdstrip.max_BM_SF_func_spd(0.6,1.8,[0,4.17],5,7.56,1.821,80,D,0.01,"SF")
 
 
 # hull_oural = Hll.Hull(0.61, 1.8, 0, 5, 7.56, 230)

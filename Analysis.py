@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from scipy.integrate import simpson
 import pandas as pd
 
+# Functions which are very interested are, m_n_improved() max_BM_SF_func_dir(), max_BM_SF_func_spd,
+# print_filewritting_max_BM_SF()
+# The others very interested for making a very first analyse but not so much now. I hope you will enjoy my code,
+# I tried to explain it in the better way, and the most detailed.
 
 class Analysis:
     """A simple class to define a file to analyse with the functions defined.
@@ -575,7 +579,7 @@ class Analysis:
                     are saved. The file is titled "res_BM_func_dir"+str(speed). Then a graph is shown with the Maximum Bending Moment in kN.m along the x_axis, and for
                     every direction.
                     """
-        the_angles = np.arange(0, 190, 45)
+        the_angles = np.arange(-180, 190, 45)
         file = open("res_" + text_var + "_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
             hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
