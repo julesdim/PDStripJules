@@ -7,8 +7,8 @@ g = 9.80665  # m/s2
 alpha = 0.0081
 
 
-class Hull:
-    """A simple class to define the hull parameters, for the JONSWAP repartition, and the coefficient for the function
+class Swell:
+    """A simple class to define the swell parameters, for the JONSWAP repartition, and the coefficient for the function
     of the wave repartition .
         :attributes
         ------------
@@ -17,14 +17,14 @@ class Hull:
         gamma: a float
             It is the gamma coefficient in the JONSWAP formula
         speed: a float
-            It is the ship speed in the hull (in m/s)
+            It is the ship speed in the swell (in m/s)
         coeff_wave: a float
             It is the coefficient for the function of the angular repartition. The function is
             cosinus(angle)**(2*coeff_wave)
         deep: a float
-            The deep of the water for the hull case (in meter)
+            The deep of the water for the swell case (in meter)
         theta_mean: a float
-            The direction of the hull in degrees. It represents the incident angle for which the wave will influence the
+            The direction of the swell in degrees. It represents the incident angle for which the wave will influence the
             most, the ship.
         """
 
@@ -38,7 +38,7 @@ class Hull:
         self.theta_mean = theta_mean  # in degree
 
     def JONSWAP(self, f: float):
-        """This function permits to return the JONSWAP formula for the hull object and a frequency value.
+        """This function permits to return the JONSWAP formula for the swell object and a frequency value.
 
         :argument
         -----------
@@ -78,7 +78,7 @@ class Hull:
             return 0.09
 
     def fp(self):
-        """That function computes the peak frequency value, for the hull case.
+        """That function computes the peak frequency value, for the swell case.
 
         :argument
         ---------

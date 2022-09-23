@@ -1,6 +1,6 @@
 import csv
 import Wave as Wv
-import Hull as Hll
+import Swell as Sw
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import simpson
@@ -24,14 +24,14 @@ class Analysis:
     def __init__(self, filename: str):
         self.filename = filename
 
-    def analysis_res(self, hull: Hll.Hull, distance_from_neutral_axis: float):
-        """That function can make the strength analysis with the information of the hull. It returns at the end the
+    def analysis_res(self, swell: Sw.Swell, distance_from_neutral_axis: float):
+        """That function can make the strength analysis with the information of the swell. It returns at the end the
         forces and the moments along the x-axis.
 
         :argument
         ---------
-        hull: a Hull.Hull object
-            It is the hull object that represents the repartition of the hull
+        swell: a Swell.Swell object
+            It is the swell object that represents the repartition of the swell
         distance_from_neutral_axis: a float
             distance between the baseline and the neutral axis for the computation of the bending moment (in m)
         :returns
@@ -48,11 +48,11 @@ class Analysis:
         filename = self.filename
         file = open(filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
-        speed = hull.speed  # m/s
-        significant_wave_height = hull.significant_wave_height  # meter
-        gamma = hull.gamma
-        coeff = hull.coeff_wave
-        deep = hull.deep  # meter
+        speed = swell.speed  # m/s
+        significant_wave_height = swell.significant_wave_height  # meter
+        gamma = swell.gamma
+        coeff = swell.coeff_wave
+        deep = swell.deep  # meter
         for line in the_lines:
             try:
                 line_formatted = line[0].strip().split()
@@ -104,7 +104,7 @@ class Analysis:
                 freq = float(line_formatted[3]) / 2 / np.pi  # in Hertz
             if example_wave_speed == speed and example_wave_length != 0 and not bool_complete_vag:
                 bool_complete_vag = True
-                coeff_vag = hull.wave_spectrum(example_wave_angle, freq)
+                coeff_vag = swell.wave_spectrum(example_wave_angle, freq)
             if bool_complete_vag:
                 act_wave = Wv.Wave(example_wave_length, example_wave_angle, example_wave_speed, deep)
                 wave_length = act_wave.wave_length
@@ -147,7 +147,7 @@ class Analysis:
     def computation_mx_BM_in_fct_mn_angle(self, speed: float, significant_wave_height: float, gamma: float,
                                           coeff_wave: float,
                                           water_depth: float, distance_from_neutral_axis: float):
-        """That function can make the strength analysis with the information of the hull. It returns at the end the
+        """That function can make the strength analysis with the information of the swell. It returns at the end the
                 forces and the moments along the x-axis, we compute the maximum bending moments from -90° to 260°, with
                 a step of 10°.
 
@@ -156,13 +156,13 @@ class Analysis:
                 speed: a float
                     It is the speed of the ship which is interesting for the computation of the maximum (in m/s)
                 significant_wave_height: a float
-                    It is the significant wave height of the hull, the Half of the maximum wave height (in m)
+                    It is the significant wave height of the swell, the Half of the maximum wave height (in m)
                 gamma: a float
                     It is the gamma value for the JONSWAP wave distribution
                 coeff_wave: a float
-                    It is the coefficient for the spreading function cos 2s used in the hull object
+                    It is the coefficient for the spreading function cos 2s used in the swell object
                 water_depth: a float
-                    The depth for the hull condition (in m)
+                    The depth for the swell condition (in m)
                 distance_from_neutral_axis: a float
                     distance between the baseline and the neutral axis for the computation of the bending moment (in m)
                 :returns
@@ -177,8 +177,8 @@ class Analysis:
         list_y2 = []
         for angle in angles:
             print(angle, "act angle")
-            hull = Hll.Hull(significant_wave_height, gamma, speed, coeff_wave, water_depth, angle)
-            the_forces, the_moments, x_coordinates = self.analysis_res(hull, distance_from_neutral_axis)
+            swell = Sw.Swell(significant_wave_height, gamma, speed, coeff_wave, water_depth, angle)
+            the_forces, the_moments, x_coordinates = self.analysis_res(swell, distance_from_neutral_axis)
             max_shear_forces = max(abs(max(the_forces)), abs(min(the_forces)))
             max_bending_moments = max(abs(max(the_moments)), abs(min(the_moments)))
             list_y1.append(max_shear_forces)
@@ -193,27 +193,27 @@ class Analysis:
         # is in ton so we convert the result in kN
         i = list_y2.index(max(list_y2))
         print(angles[i], "angle of the maximum bending moment in degrees")
-        hull = Hll.Hull(significant_wave_height, gamma, speed, coeff_wave, water_depth, angles[i])
-        the_forces, the_moments, x_coordinates = self.analysis_res(hull, distance_from_neutral_axis)
+        swell = Sw.Swell(significant_wave_height, gamma, speed, coeff_wave, water_depth, angles[i])
+        the_forces, the_moments, x_coordinates = self.analysis_res(swell, distance_from_neutral_axis)
         i = np.argmax(the_moments)
         print(x_coordinates[i], "coordinates of the maximum bending moment max")
         plt.plot(x_coordinates, the_forces)
-        plt.title("Shear forces for the hull case the most limiting")
+        plt.title("Shear forces for the swell case the most limiting")
         plt.show()
         plt.plot(x_coordinates, the_moments)
-        plt.title("Bending moments for the hull case the most limiting")
+        plt.title("Bending moments for the swell case the most limiting")
         plt.show()
         return
 
-    def plot(self, hull: Hll.Hull, distance_from_neutral_axis):
+    def plot(self, swell: Sw.Swell, distance_from_neutral_axis):
         """That function permits to plot the graphs of the moments and the strengths along the x axis for the wave list
-        and the hull associated. It plots the values with the units of the input file, in ton for the forces and in
+        and the swell associated. It plots the values with the units of the input file, in ton for the forces and in
         ton.m for the moments
 
         :argument
         ----------
-        hull: a Hull.Hull object
-            It is the hull object that represents the repartition of the wave list
+        swell: a Swell.Swell object
+            It is the swell object that represents the repartition of the wave list
 
         :returns
         --------
@@ -225,7 +225,7 @@ class Analysis:
             It is a list with all the x_coordinates in the PD Strip coordinate system. That is the coordinates
             associated to the strength and the moments (in meter)
         """
-        forces, moments, list_x = self.analysis_res(hull, distance_from_neutral_axis)
+        forces, moments, list_x = self.analysis_res(swell, distance_from_neutral_axis)
         plt.plot(list_x, forces)
         plt.title("Shear Forces in ton")
         plt.show()
@@ -234,25 +234,25 @@ class Analysis:
         plt.show()
         return forces, moments, list_x
 
-    def writing(self, hull: Hll.Hull, distance_from_neutral_axis):
-        """That function permits to create a file named data_for_hull and all the values for every x coordinates of the
+    def writing(self, swell: Sw.Swell, distance_from_neutral_axis):
+        """That function permits to create a file named data_for_swell and all the values for every x coordinates of the
         forces and the moments will be saved. That writes directly the result computed with units of the file, in ton
         for the shear forces and in ton.m for the bending moments.
 
         :argument
-        hull: Hull.Hull() object
-            It's the specific hull, for the saved file
+        swell: Swell.Swell() object
+            It's the specific swell, for the saved file
 
         :returns
         Nothing it creates a file with in a first column the x coordinates, the second one the forces, and the last one
         the moments for each x coordinates."""
-        forces, moments, list_x = self.analysis_res(hull, distance_from_neutral_axis)
+        forces, moments, list_x = self.analysis_res(swell, distance_from_neutral_axis)
         n = len(forces)
-        file_written = open("data_for_hull", "w")
+        file_written = open("data_for_swell", "w")
         for i in range(n):
             file_written.write(str(list_x[i]) + " " + str(forces[i]) + " " + str(moments[i]) + "\n")
 
-    def m_n(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float):
+    def m_n(self, n: int, swell: Sw.Swell, distance_from_neutral_axis: float):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
         order moment. This is a very long method because it needs a numerous reading of the file.
 
@@ -260,8 +260,8 @@ class Analysis:
                         ---------
                         n: an int
                             It is the order of the moment computed
-                        hull: a Hll.Hull object
-                            It is the hull for or which we will calculate the moment
+                        swell: a Sw.Swell object
+                            It is the swell for or which we will calculate the moment
                         distance_from_neutral_axis: a float
                             distance between the baseline and the neutral axis for the computation of the bending moment
                             (in m)
@@ -356,7 +356,7 @@ class Analysis:
                         ex_wv_angle = float(line_formatted[2])
                     if line_formatted[0] == "speed" and not bool_complete_wv:
                         ex_wv_spd = float(line_formatted[1])
-                    if ex_wv_spd == hull.speed and ex_wv_angle == angle and not bool_complete_wv:
+                    if ex_wv_spd == swell.speed and ex_wv_angle == angle and not bool_complete_wv:
                         if line_formatted[0] == "Force":
                             ex_int = float(line_formatted[1])
                         if line_formatted[0] == "Moment" and ex_int == inter:
@@ -369,8 +369,8 @@ class Analysis:
                 freqs = list(m_freq.keys())
                 vals = []
                 for freq in freqs:
-                    vals.append((abs(freq - ((freq) ** 2) * hull.speed * np.cos(angle) / g) ** n) * (
-                            m_freq[freq] ** 2) * hull.JONSWAP(freq / 2 / np.pi))
+                    vals.append((abs(freq - ((freq) ** 2) * swell.speed * np.cos(angle) / g) ** n) * (
+                            m_freq[freq] ** 2) * swell.JONSWAP(freq / 2 / np.pi))
                 res = simpson(vals, freqs)
                 if angle < 0:
                     mu = np.pi / 180 * (360 + angle)
@@ -381,7 +381,7 @@ class Analysis:
             the_angles.sort()
             vals2 = []
             for mu2 in the_angles:
-                vals2.append(m_n_mu[mu2] * hull.spreading_func(mu2 * 180 / np.pi))
+                vals2.append(m_n_mu[mu2] * swell.spreading_func(mu2 * 180 / np.pi))
             res2 = simpson(vals2, the_angles)
             m_int[inter] = res2
             print(inter)
@@ -391,7 +391,7 @@ class Analysis:
             file2.write(str(x) + " " + str(mn) + "\n")
         return m_int
 
-    def m_n_improved(self, n: int, hull: Hll.Hull, distance_from_neutral_axis: float, text_var):
+    def m_n_improved(self, n: int, swell: Sw.Swell, distance_from_neutral_axis: float, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
 
@@ -399,8 +399,8 @@ class Analysis:
                                 ---------
                                 n: an int
                                     It is the order of the moment computed
-                                hull: a Hll.Hull object
-                                    It is the hull for or which we will calculate the moment
+                                swell: a Sw.Swell object
+                                    It is the swell for or which we will calculate the moment
                                 distance_from_neutral_axis: a float
                                     distance between the baseline and the neutral axis for the computation of the
                                     bending moment (in m)
@@ -496,7 +496,7 @@ class Analysis:
                 ex_wv_angle = float(line_formatted[2])
             if line_formatted[0] == "speed" and not bool_complete_wv:
                 ex_wv_spd = float(line_formatted[1])
-            if ex_wv_spd == hull.speed and not bool_complete_wv:
+            if ex_wv_spd == swell.speed and not bool_complete_wv:
                 if line_formatted[0] == "Force":
                     element_force_x = float(line_formatted[4])
                     ex_int = float(line_formatted[1])
@@ -525,7 +525,7 @@ class Analysis:
                     freq_th = freq[0]
                     freq_e = freq[1]
                     vals_mn[abs(freq_th)] = (
-                            (abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * hull.JONSWAP(abs(freq_th) / 2 / np.pi))
+                            (abs(freq_e) ** n) * (m_int[x][mu][freq] ** 2) * swell.JONSWAP(abs(freq_th) / 2 / np.pi))
                 list1 = list(vals_mn.keys())
                 list_int = []
                 list1.sort()
@@ -534,7 +534,7 @@ class Analysis:
                 int_func_freqs = simpson(list_int, list1)
                 if pd.isna(int_func_freqs):
                     int_func_freqs = 0
-                int_freq_func_mu[mu * np.pi / 180] = int_func_freqs * hull.spread_func_int(mu, 10)
+                int_freq_func_mu[mu * np.pi / 180] = int_func_freqs * swell.spread_func_int(mu, 10)
             res3 = simpson(list(int_freq_func_mu.values()), list(int_freq_func_mu.keys()))
             m_n_along_x[x] = res3
         les_x = list(m_n_along_x.keys())
@@ -557,12 +557,12 @@ class Analysis:
                     gamma: a float
                         It is the gamma coefficient in the JONSWAP formula
                     speed: a float
-                        It is the ship speed in the hull (in m/s)
+                        It is the ship speed in the swell (in m/s)
                     coeff_wave: a float
                         It is the coefficient for the function of the angular repartition. The function is
                         cosinus(angle)**(2*coeff_wave)
                     deep: a float
-                        The deep of the water for the hull case (in meter)
+                        The deep of the water for the swell case (in meter)
                     distance_from_neutral_axis: a float
                         the distance of the neutral axis from the baseline (in meter)
                     D: a float
@@ -582,9 +582,9 @@ class Analysis:
         the_angles = np.arange(-180, 190, 45)
         file = open("res_" + text_var + "_func_dir" + str(speed), "w", encoding="utf-8")
         for angle in the_angles:
-            hull = Hll.Hull(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
+            swell = Sw.Swell(significant_wav_height, gamma, speed, coeff_wave, deep, angle)
+            m0 = self.m_n_improved(0, swell, distance_from_neutral_axis, text_var)
+            m2 = self.m_n_improved(2, swell, distance_from_neutral_axis, text_var)
             inter = list(m0.keys())
             max_BM_SF = {}
             file.write(str(angle) + "\n")
@@ -623,11 +623,11 @@ class Analysis:
                         It is the coefficient for the function of the angular repartition. The function is
                         cosinus(angle)**(2*coeff_wave)
                     deep: a float
-                        The deep of the water for the hull case (in meter)
+                        The deep of the water for the swell case (in meter)
                     distance_from_neutral_axis: a float
                         the distance of the neutral axis from the baseline (in meter)
                     angle: a float
-                        The main direction of the hull (in degrees)
+                        The main direction of the swell (in degrees)
                     D: a float
                         The time spent in the seaway of the ship for a certain period (in seconds)
                     alpha: a float
@@ -645,9 +645,9 @@ class Analysis:
                     """
         file = open("res_" + text_var + "_func_spd", "w", encoding="utf-8")
         for spd in list_speed:
-            hull = Hll.Hull(significant_wav_height, gamma, spd, coeff_wave, deep, angle)
-            m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
-            m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
+            swell = Sw.Swell(significant_wav_height, gamma, spd, coeff_wave, deep, angle)
+            m0 = self.m_n_improved(0, swell, distance_from_neutral_axis, text_var)
+            m2 = self.m_n_improved(2, swell, distance_from_neutral_axis, text_var)
             inter = list(m0.keys())
             max_BM = {}
             file.write(str(spd) + "\n")
@@ -670,13 +670,13 @@ class Analysis:
         plt.show()
         file.close()
 
-    def print_filewritting_max_BM_SF(self, hull, distance_from_neutral_axis, D, alpha, text_var):
+    def print_filewritting_max_BM_SF(self, swell, distance_from_neutral_axis, D, alpha, text_var):
         """That function analyses the data of the pdstrip output file and then it computes for each intersection n_th
                 order moment. This is a very optimized method, because it requires only one reading of the file.
                     :argument
                     ---------
-                    hull: a Hll.Hull object
-                        It is the hull for or which we will calculate the moment
+                    swell: a Sw.Swell object
+                        It is the swell for or which we will calculate the moment
                     distance_from_neutral_axis: a float
                         distance between the baseline and the neutral axis for the computation of the
                         bending moment (in m)
@@ -690,11 +690,11 @@ class Analysis:
                     :returns
                     --------
                     Nothing
-                    It creates one file for a very precise hull, titled "max_BM". It will print one graph of the maximum
+                    It creates one file for a very precise swell, titled "max_BM". It will print one graph of the maximum
                     Bending moments along the x_axis.
                     """
-        m0 = self.m_n_improved(0, hull, distance_from_neutral_axis, text_var)
-        m2 = self.m_n_improved(2, hull, distance_from_neutral_axis, text_var)
+        m0 = self.m_n_improved(0, swell, distance_from_neutral_axis, text_var)
+        m2 = self.m_n_improved(2, swell, distance_from_neutral_axis, text_var)
         inter = list(m0.keys())
         max_BM_SF = {}
         file = open("max_" + text_var, "w", encoding="utf-8")

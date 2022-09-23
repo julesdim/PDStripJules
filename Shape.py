@@ -214,7 +214,7 @@ class Form:
         # ax.set_xlabel('x-axis in meter')
         # ax.set_ylabel('y-axis in meter')
         # ax.set_zlabel('z-axis in meter')
-        # ax.set_title('Hull shape')
+        # ax.set_title('Swell shape')
         #plt.tight_layout()
         plt.show()
 

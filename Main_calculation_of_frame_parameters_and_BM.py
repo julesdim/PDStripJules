@@ -6,7 +6,7 @@ import Loading as ld
 import matplotlib.pyplot as plt
 import Wave as wv
 import Analysis as Anls
-import Hull as Hll
+import Swell as Sw
 import numpy as np
 from numpy import inf
 
@@ -109,25 +109,26 @@ masses2 = "test2.csv"
 # masses2 = "North route.csv"
 shape2 = "oural_standaard_pias_text_file.txt"
 # Writing_of_the_PDstrip_input_file(masses2, shape2, 135)
-D = 11000 / 4.17 * 100
+Dnorth = 11000 / 4.17 * 100 * 20
+Dsouth= 44946/4.17*100*20
 pdstrip = Anls.Analysis("pdstrip.out.ok")
-hull_oural = Hll.Hull(0.6, 1.8, 4.17, 5, 7.56, 0)
+hull_oural = Sw.Swell(0.6, 1.8, 4.17, 5, 7.56, 0)
 # hull_oural.plot_spreading(-90,270,10)
-# hull_oural.plot_JONSWAP(0.1,2.5,0.08)
+hull_oural.plot_JONSWAP(0.1,2.5,0.08)
 # res=pdstrip.m_n_improved(2, hull_oural, 1.821)
 # pdstrip.print_filewritting_max_BM(hull_oural,1.821,D,0.01)
 # list_wv_height=np.arange(0.5,3,0.5)
-pdstrip.max_BM_SF_func_dir(0.6,1.8,0,5,7.56,1.821,D,0.01,"SF")
-pdstrip.max_BM_SF_func_dir(0.6, 1.8, 4.17, 5, 7.56, 1.821, D, 0.01,"SF")
+pdstrip.max_BM_SF_func_dir(0.6,1.8,0,5,17.56,1.821,Dnorth,0.01,"BM")
+pdstrip.max_BM_SF_func_dir(0.6, 1.8, 4.17, 5, 17.56, 1.821, Dnorth, 0.01,"BM")
 # pdstrip.max_BM_SF_func_spd(0.6,1.8,[0,4.17],5,7.56,1.821,80,D,0.01,"SF")
 
 
-# hull_oural = Hll.Hull(0.61, 1.8, 0, 5, 7.56, 230)
+# hull_oural = Sw.Swell(0.61, 1.8, 0, 5, 7.56, 230)
 # pdstrip.computation_mx_BM_in_fct_mn_angle(0, 0.61, 1.8, 5, 17.56, 1.821)
 # pdstrip.computation_mx_BM_in_fct_mn_angle(4.17, 0.61, 1.8, 5, 7.56, 1.821)
-# hull_max0= Hll.Hull(0.61, 1.8, 4.17, 5, 7.56, 58)
+# hull_max0= Sw.Swell(0.61, 1.8, 4.17, 5, 7.56, 58)
 # pdstrip.writing(hull_max0, 1.821)
-# hull_max4=Hll.Hull(0.6, 1.8, 4.17, 5, 7.56,128)
+# hull_max4=Sw.Swell(0.6, 1.8, 4.17, 5, 7.56,128)
 # pdstrip.writing(hull_max4,1.821)
 
 # hull_oural.plot_spreading(0,360,10)

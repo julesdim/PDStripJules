@@ -5,7 +5,7 @@ import Masses as ms
 import Shape as sh
 import Frames as fr
 import csv
-import Hull as Hll
+import Swell as Sw
 import Wave as Wv
 import Analysis as Anls
 
@@ -136,7 +136,7 @@ class Test(unittest.TestCase):
         x_coordinates = []
         file = open(filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
-        hull = Hll.Hull(significant_wave_height, gamma, speed, coeff, 17.56, 0)
+        hull = Sw.Swell(significant_wave_height, gamma, speed, coeff, 17.56, 0)
         for line in the_lines:
             try:
                 line_formatted = line[0].strip().split()
@@ -232,7 +232,7 @@ class Test(unittest.TestCase):
         filename = "pdstrip.out.ok"
         file = open(filename, "r", encoding="utf-8")
         the_lines = csv.reader(file)
-        hull = Hll.Hull(0.6, 1.8, 0, 5, 7.56,0)
+        hull = Sw.Swell(0.6, 1.8, 0, 5, 7.56, 0)
         speed = hull.speed  # m/s
         significant_wave_height = hull.significant_wave_height  # meter
         gamma = hull.gamma
