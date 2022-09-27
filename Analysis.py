@@ -52,7 +52,7 @@ class Analysis:
         significant_wave_height = swell.significant_wave_height  # meter
         gamma = swell.gamma
         coeff = swell.coeff_wave
-        deep = swell.deep  # meter
+        deep = swell.depth  # meter
         for line in the_lines:
             try:
                 line_formatted = line[0].strip().split()
@@ -561,8 +561,8 @@ class Analysis:
                     coeff_wave: a float
                         It is the coefficient for the function of the angular repartition. The function is
                         cosinus(angle)**(2*coeff_wave)
-                    deep: a float
-                        The deep of the water for the swell case (in meter)
+                    depth: a float
+                        The depth of the water for the swell case (in meter)
                     distance_from_neutral_axis: a float
                         the distance of the neutral axis from the baseline (in meter)
                     D: a float
@@ -622,8 +622,8 @@ class Analysis:
                     coeff_wave: a float
                         It is the coefficient for the function of the angular repartition. The function is
                         cosinus(angle)**(2*coeff_wave)
-                    deep: a float
-                        The deep of the water for the swell case (in meter)
+                    depth: a float
+                        The depth of the water for the swell case (in meter)
                     distance_from_neutral_axis: a float
                         the distance of the neutral axis from the baseline (in meter)
                     angle: a float

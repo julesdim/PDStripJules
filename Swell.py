@@ -21,20 +21,20 @@ class Swell:
         coeff_wave: a float
             It is the coefficient for the function of the angular repartition. The function is
             cosinus(angle)**(2*coeff_wave)
-        deep: a float
-            The deep of the water for the swell case (in meter)
+        depth: a float
+            The depth of the water for the swell case (in meter)
         theta_mean: a float
             The direction of the swell in degrees. It represents the incident angle for which the wave will influence the
             most, the ship.
         """
 
-    def __init__(self, significant_wave_height: float, gamma: float, speed: float, coeff_wave: int, deep: float,
+    def __init__(self, significant_wave_height: float, gamma: float, speed: float, coeff_wave: int, depth: float,
                  theta_mean: float):
         self.significant_wave_height = significant_wave_height  # in meter
         self.gamma = gamma
         self.speed = speed  # in m/s
         self.coeff_wave = coeff_wave
-        self.deep = deep  # in meter #the depth
+        self.depth = depth  # in meter #the depth
         self.theta_mean = theta_mean  # in degree
 
     def JONSWAP(self, f: float):

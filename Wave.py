@@ -22,8 +22,8 @@ class Wave:
         This is the frequency of the wave (in Hertz)
     freq_e: a float
         This is the wave frequency encountered by the ship (in Hertz)
-    deep: a float
-        This is the deep of the water (in m)
+    depth: a float
+        This is the depth of the water (in m)
     """
 
     def __init__(self, wave_length, angle, speed, depth):
@@ -34,4 +34,4 @@ class Wave:
         # check that coeff with Excel
         self.freq = np.sqrt(g * self.k * np.tanh(self.k * depth)) / (2 * np.pi)  # it is omega/2*pi, in s**(-1)
         self.freq_e = self.freq - self.k * speed * np.cos(np.pi * angle / 180)
-        self.deep = depth
+        self.depth = depth

@@ -237,7 +237,7 @@ class Test(unittest.TestCase):
         significant_wave_height = hull.significant_wave_height  # meter
         gamma = hull.gamma
         coeff = hull.coeff_wave
-        deep = hull.deep  # meter
+        deep = hull.depth  # meter
         distance_from_neutral_axis=1.821
         for line in the_lines:
             try:
