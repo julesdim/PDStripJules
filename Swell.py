@@ -193,9 +193,9 @@ class Swell:
         les_theta = np.arange(theta1, theta2, step)
         les_y = []
         for theta in les_theta:
-            y = self.spread_func_int(theta,10)
+            y = self.spreading_func(theta)
             les_y.append(y)
         plt.plot(les_theta, les_y)
-        plt.xlabel("Angles in degrees")
+        plt.xlabel("Angles in degree")
         plt.ylabel("Spreading function")
         plt.show()
