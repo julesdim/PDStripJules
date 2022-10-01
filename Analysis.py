@@ -503,6 +503,8 @@ class Analysis:
                     if text_var == "SF":
                         m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = float(line_formatted[7]) * 9.80665 / (
                                 (ex_wv_freq) ** 2)
+                        #multiplication by g is for the conversion in kN, and the division by omega**2 is an
+                        # experimental conclusion.
                 if line_formatted[0] == "Moment" and text_var == "BM":
                     m_int[ex_int][ex_wv_angle][(ex_wv_freq, ex_wv_freq_e)] = (float(line_formatted[6]) +
                                                         element_force_x * distance_from_neutral_axis) * 9.80665 / (
